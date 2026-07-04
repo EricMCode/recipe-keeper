@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recipe Keeper</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="masthead">
+      <div class="masthead__image" aria-hidden="true"></div>
+      <div class="masthead__content">
+        <p class="eyebrow">Recipe archive and meal planner</p>
+        <h1>Recipe Keeper</h1>
+        <p class="intro">Store favorites, tag what matters, find dinner from what is on hand, and let the planner fill the week.</p>
+      </div>
+    </header>
+
+    <main>
+      <nav class="tabs" aria-label="App sections">
+        <button class="tab is-active" data-tab="recipes" type="button">Recipes</button>
+        <button class="tab" data-tab="planner" type="button">Weekly Planner</button>
+      </nav>
+
+      <section id="recipes" class="panel is-active">
+        <div class="split">
+          <form id="recipeForm" class="recipe-form">
+            <div class="section-heading">
+                <h2>Add Recipe</h2>
+              <button id="resetForm" class="ghost" type="button">New blank</button>
+            </div>
+            <input id="editingId" type="hidden">
+            <label>
+              Recipe name
+              <input id="title" required placeholder="Lemon chicken and rice">
+            </label>
+            <div class="form-grid">
+              <label>
+                Meal
+                <select id="course">
+                  <option>Dinner</option>
+                  <option>Breakfast</option>
+                  <option>Lunch</option>
+                  <option>Dessert</option>
+                  <option>Snack</option>
+                </select>
+              </label>
+              <label>
+                Fare
+                <select id="fare">
+                  <option value="balanced">Balanced</option>
+                  <option value="low-calorie">Low calorie</option>
+                  <option value="rich">Richer fare</option>
+                  <option value="high-protein">High protein</option>
+                  <option value="vegetarian">Vegetarian</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-grid">
+              <label>
+                Cuisine or mood
+                <input id="cuisine" placeholder="Chinese, cozy, summer">
+              </label>
+              <label>
+                Calories
+                <input id="calories" type="number" min="0" step="10" placeholder="Optional">
+              </label>
+            </div>
+            <label>
+              Tags
+              <input id="tags" placeholder="#chicken #rice #quick">
+            </label>
+            <label>
+              Ingredients
+              <textarea id="ingredients" required placeholder="Chicken thighs&#10;Rice&#10;Lemon&#10;Garlic"></textarea>
+            </label>
+            <label>
+              Instructions
+              <textarea id="instructions" required placeholder="Write or paste the recipe steps here."></textarea>
+            </label>
+            <button class="primary" type="submit">Save recipe</button>
+          </form>
+
+          <div class="library">
+            <div class="section-heading">
+              <div>
+                <h2>Recipe Archive</h2>
+                <p id="archiveStats" class="section-note">0 saved recipes - 0 dinner options - 0 lighter picks</p>
+              </div>
+              <label class="toggle">
+                <input id="showArchived" type="checkbox">
+                Show archived
+              </label>
+            </div>
+            <div class="filters">
+              <input id="search" placeholder="Search names, tags, ingredients">
+              <select id="filterCourse">
+                <option value="">Any meal</option>
+                <option>Dinner</option>
+                <option>Breakfast</option>
+                <option>Lunch</option>
+                <option>Dessert</option>
+                <option>Snack</option>
+              </select>
+              <select id="filterFare">
+                <option value="">Any fare</option>
+                <option value="low-calorie">Low calorie</option>
+                <option value="balanced">Balanced</option>
+                <option value="rich">Richer fare</option>
+                <option value="high-protein">High protein</option>
+                <option value="vegetarian">Vegetarian</option>
+              </select>
+            </div>
+            <div id="tagCloud" class="tag-cloud" aria-label="Recipe tags"></div>
+            <div id="recipeList" class="recipe-list"></div>
+
+            <div class="archive-tools">
+              <details>
+                <summary>Backup recipes</summary>
+                <div class="backup-controls">
+                  <button id="exportRecipes" class="primary" type="button">Export Recipes</button>
+                  <label class="ghost file-label" for="importRecipes">Import Recipes</label>
+                  <input id="importRecipes" class="file-input" type="file" accept="application/json,.json">
+                  <select id="importMode" aria-label="Import mode">
+                    <option value="merge">Merge with existing</option>
+                    <option value="replace">Replace archive</option>
+                  </select>
+                </div>
+                <p id="backupStatus" class="section-note" role="status">Export creates a backup file. Import restores recipes from that file.</p>
+              </details>
+
+              <details>
+                <summary>Ingredient match</summary>
+                <label>
+                  What do you have?
+                  <textarea id="availableIngredients" placeholder="Chicken, rice, broccoli"></textarea>
+                </label>
+                <button id="matchIngredients" class="primary" type="button">Find matches</button>
+                <div id="ingredientMatches" class="match-list"></div>
+              </details>
+
+              <details>
+                <summary>Suggested recipes</summary>
+                <div class="section-heading compact-heading">
+                  <p class="section-note">Ideas can be saved into the archive.</p>
+                  <button id="refreshIdeas" class="ghost" type="button">Refresh</button>
+                </div>
+                <div id="ideaList" class="idea-list"></div>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="planner" class="panel">
+        <div class="planner-toolbar">
+          <div>
+            <h2>Weekly Planner</h2>
+            <p class="section-note">Auto-fill the week, override any slot, and collapse anything that is not useful right now.</p>
+          </div>
+          <div class="planner-actions">
+            <select id="plannerCriteria">
+              <option value="">Any saved recipe</option>
+              <option value="low-calorie">Low calorie</option>
+              <option value="balanced">Balanced</option>
+              <option value="rich">Richer fare</option>
+              <option value="high-protein">High protein</option>
+              <option value="vegetarian">Vegetarian</option>
+            </select>
+            <button id="autoPlan" class="primary" type="button">Plan week</button>
+            <button id="clearPlan" class="ghost" type="button">Clear</button>
+          </div>
+        </div>
+        <div id="plannerGrid" class="planner-grid"></div>
+      </section>
+    </main>
+
+    <template id="recipeCardTemplate">
+      <article class="recipe-card">
+        <div class="recipe-card__top">
+          <div>
+            <p class="recipe-card__meta"></p>
+            <h3></h3>
+          </div>
+          <span class="fare-pill"></span>
+        </div>
+        <p class="recipe-card__ingredients"></p>
+        <div class="tags"></div>
+        <details>
+          <summary>Ingredients and instructions</summary>
+          <div class="detail-body"></div>
+        </details>
+        <div class="card-actions">
+          <button class="ghost edit-recipe" type="button">Edit</button>
+          <button class="ghost archive-recipe" type="button">Archive</button>
+        </div>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
